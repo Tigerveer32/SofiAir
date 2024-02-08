@@ -40,6 +40,8 @@ export default function DashboardScreen({ navigation }) {
       });
       console.log("Product updated:", { stok });
       alert('Berhasil memperbarui data');
+      //set value stok menjadi null
+        setStok('');
     } catch (error) {
       console.error("Error updating product: ", error);
     }
@@ -66,12 +68,12 @@ export default function DashboardScreen({ navigation }) {
           <View style={{ flex: 1, padding: 10 }}>
             <Text>{product.harga}</Text>
           </View>
-          <View style={{ flex: 1, padding: 10 }}>
-            <Text>{product.stok}</Text>
+          <View style={{ flex: 1, padding: 20 }}>
             <TextInput
               style={{ height: 30, borderColor: 'gray', borderWidth: 1 }}
               onChangeText={text => setStok(text)}
-              value={stok[product.productId]}
+              value={stok}
+              placeholder={product.stok}
               keyboardType="numeric"
             />
           </View>

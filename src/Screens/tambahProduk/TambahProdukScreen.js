@@ -4,7 +4,7 @@ import { handleTambahProduk } from '../../../firebase';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../../../firebase';
 
-export default function TambahProdukScreen () {
+export default function TambahProdukScreen ({navigation}) {
     const [product, setProduct] = useState({
       productId: '',
       harga: '',
@@ -47,6 +47,7 @@ export default function TambahProdukScreen () {
             };
             // Memanggil fungsi handleTambahProduk dengan data produk
             await handleTambahProduk(produkData);
+            navigation.navigate('dashboard')
         } catch (error) {
             console.error("Error menambahkan product: ", error);
         }
