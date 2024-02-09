@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, signOut}  from "firebase/auth";
-import { getFirestore, collection, addDoc,doc,setDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc,doc,setDoc,getDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyALxLTGOhFkN2AIJeR2YvYgkVdxlNrQr7E",
@@ -24,11 +24,9 @@ const LogOut = () => {
     // An error happened.
   });
 }
-const auth = getAuth(app);
 
-const db = getFirestore();
 
-export { auth, db, LogOut };
+
 
 export const handleTambahProduk = async (produkData) => {
     try {
@@ -39,3 +37,13 @@ export const handleTambahProduk = async (produkData) => {
       console.error('Error menambahkan produk: ', error);
     }
   };
+
+  
+
+
+
+const auth = getAuth(app);
+
+const db = getFirestore();
+
+export { auth, db, LogOut };

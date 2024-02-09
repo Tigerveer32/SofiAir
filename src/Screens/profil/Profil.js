@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
 import { auth, db } from "../../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
   const uid = auth.currentUser.uid;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,6 +14,7 @@ const ProfileScreen = () => {
     try {
       await auth.signOut(); // Melakukan logout pengguna
       console.log('User logged out successfully');
+      navigation.navigate('Login')
     } catch (error) {
       console.error('Error signing out: ', error);
     }

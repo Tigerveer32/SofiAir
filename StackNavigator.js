@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack"; 
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,16 +12,20 @@ import homeScreen from "./src/Screens/home/Home";
 import RegisterScreen from "./src/Screens/register/Register";
 import DashboardScreen from "./src/Screens/dashboard/Dashboard";
 import ProfileScreen from "./src/Screens/profil/Profil";
-import TambahProdukScreen from "./src/Screens//tambahProduk/TambahProdukScreen";
+import TambahProdukScreen from "./src/Screens/tambahProduk/TambahProdukScreen";
+
 
 const StackNavigator = () => {
     const Tab = createBottomTabNavigator();
     const Stack = createNativeStackNavigator();
 
+    const role = "admin"
+
     function BottomTabs() {
         return (
           <Tab.Navigator>
-            {/* <Tab.Screen
+            {role == "karyawan" &&
+              <Tab.Screen
               name="Home"
               component={homeScreen}
               options={{
@@ -34,8 +38,9 @@ const StackNavigator = () => {
                     <AntDesign name="home" size={24} color="black" />
                   ),
               }}
-            /> */}
-            <Tab.Screen
+            />}
+            {role == "admin" &&
+          <Tab.Screen
           name="dashboard"
           component={DashboardScreen}
           options={{
@@ -53,7 +58,11 @@ const StackNavigator = () => {
               ),
           }}
         />
-        <Tab.Screen
+    }
+            
+        {
+          role == "admin" &&
+          <Tab.Screen
           name="Profile"
           component={ProfileScreen}
           options={{
@@ -67,9 +76,13 @@ const StackNavigator = () => {
               ),
           }}
         />
+        }
+        
              </Tab.Navigator>
         );
         }
+
+        
     return (
         <NavigationContainer>
           <Stack.Navigator>

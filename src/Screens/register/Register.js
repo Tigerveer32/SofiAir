@@ -65,7 +65,6 @@ import {
         (userCredentials) => {
           const user = userCredentials._tokenResponse.email;
           const uid = auth.currentUser.uid;
-  
           setDoc(doc(db, "users", `${uid}`), {
             name: name,
             email: user,
@@ -178,6 +177,7 @@ import {
                   width: 300,
                 }}
               >
+                <Picker.Item label="Select Role" value="" />
                 <Picker.Item label="Admin" value="admin" />
                 <Picker.Item label="Karyawan" value="karyawan" />
               </Picker>

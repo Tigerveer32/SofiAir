@@ -125,6 +125,10 @@ const LoginScreen = () => {
                 secureTextEntry={true}
                 placeholder="Password"
                 placeholderTextColor={"black"}
+                returnKeyType="search"
+                onSubmitEditing={()=>{
+
+                }}
                 style={{
                   fontSize: password ? 18 : 18,
                   borderBottomWidth: 1,
