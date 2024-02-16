@@ -13,6 +13,7 @@ export default function CardDashboardProduct(params) {
       try {
         const docSnap = await getDocs(collection(db, "listProduct"));
         const productList = docSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setStok(params?.stok); // Set stok value from params
         setProductData(productList);
         // Listen for real-time updates
         const unsubscribe = onSnapshot(collection(db, "listProduct"), (snapshot) => {
@@ -43,8 +44,6 @@ export default function CardDashboardProduct(params) {
   
       console.log("Product updated:", { stok });
       alert('Berhasil memperbarui data');
-      // Reset stok value to empty string
-      setStok('');
     } catch (error) {
       console.error("Error updating product: ", error);
     }

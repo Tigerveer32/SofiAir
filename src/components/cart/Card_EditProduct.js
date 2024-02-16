@@ -9,6 +9,31 @@ export default function CardEditProduct(params) {
     const [stok, setStok] = useState(""); // Initialize with an empty string
     const [productData, setProductData] = useState([]);
 
+    // Fetch Data dari firebase
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const docSnap = await getDocs(collection(db, "listProduct"));
+        const productList = docSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setProduk(params?.produk); // Set produk value from params
+        setHarga(params?.harga); // Set harga value from params
+        setStok(params?.stok); // Set stok value from params
+        setProductData(productList);
+        // Listen for real-time updates
+        const unsubscribe = onSnapshot(collection(db, "listProduct"), (snapshot) => {
+          const updatedProductList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setProductData(updatedProductList);
+        });
+
+        return () => unsubscribe(); // Unsubscribe when component unmounts
+      } catch (error) {
+        console.error("Error fetching document: ", error);
+      }
+    };
+
+    fetchProductData();
+  }, []);
+
     //updatedata
   const handleUpdateProduct = async (productId) => {
     try {
