@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text, View, Button } from 'react-native';
 import { auth, db } from "../../../firebase";
 import { collection, getDocs ,onSnapshot } from "firebase/firestore";
-import DashboardProduct from "./Dashboard_product";
+import CardDashboardProduct from "../../components/cart/Card_Dashboard";
 
 
 const Head_Table = ["No", "Nama Produk", "Harga", "Stok Update"];
@@ -45,12 +45,17 @@ export default function DashboardScreen({ navigation }) {
         ))}
       </View>
       {productData.map((product, index) => (
-        <DashboardProduct {...product} key={index} />
+        <CardDashboardProduct {...product} key={index} />
       ))}
       <View>
       <Button 
         title="Tambah produk" 
         onPress={() => navigation.navigate('TambahProdukScreen')}
+      />
+      <Button 
+        title="Edit" 
+        onPress={() => navigation.navigate('EditProdukScreen')} 
+        style={{ width: 10 }} 
       />
     </View>
     </View>

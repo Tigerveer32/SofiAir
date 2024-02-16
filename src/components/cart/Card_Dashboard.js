@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { db } from "../../../firebase";
 import { collection, getDocs, doc, updateDoc, onSnapshot } from "firebase/firestore";
 
-export default function DashboardProduct(params) {
+export default function CardDashboardProduct(params) {
   const [stok, setStok] = useState(""); // Initialize with an empty string
   const [productData, setProductData] = useState([]);
 
@@ -55,13 +55,13 @@ export default function DashboardProduct(params) {
       <View style={{ padding: 10, marginLeft: 5 }}>
         <Text>{params?.productId}</Text>
       </View>
-      <View style={{ flex: 1, padding: 10 }}>
+      <View style={{ flex: 1, padding: 10 ,  marginRight:10}}>
         <Text>{params?.produk}</Text>
       </View>
       <View style={{ flex: 1, padding: 10 }}>
         <Text>{params?.harga}</Text>
       </View>
-      <View style={{ flex: 1, padding: 20 }}>
+      <View style={{ flex: 1, padding: 10 }}>
         <TextInput
           style={{ height: 30, borderColor: 'gray', borderWidth: 1 }}
           onChangeText={text => setStok(text)}
@@ -72,7 +72,6 @@ export default function DashboardProduct(params) {
       </View>
       <View style={{ flex: 1, padding: 5 }}>
         <Button title="Simpan" onPress={() => handleUpdateProduct(params?.productId)} style={{ width: 10 }} />
-        <Button title="Edit" onPress={() => handleUpdateProduct(params?.productId)} style={{ width: 10 }} />
       </View>
     </View>
   );

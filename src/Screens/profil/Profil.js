@@ -47,10 +47,8 @@ const ProfileScreen = ({navigation}) => {
       const docRef = doc(db, "users", uid);
       await updateDoc(docRef, {
         name: name,
-        email: email,
         phone: phone,
       });
-      updateEmail(auth.currentUser())
       console.log("Profile updated:", { name, email, phone });
     } catch (error) {
       console.error("Error updating profile: ", error);
@@ -80,10 +78,7 @@ const ProfileScreen = ({navigation}) => {
       </View>
       <TextInput
         style={styles.input}
-        placeholder="Email"
         value={email}
-        onChangeText={(text) => setEmail(text)}
-        keyboardType="email-address"
       />
       <View>
         <Text>Phone</Text>

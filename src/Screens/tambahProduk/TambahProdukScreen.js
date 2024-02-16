@@ -54,19 +54,22 @@ export default function TambahProdukScreen ({navigation}) {
     };
 
     return (
-      <View style={{ flex: 2, marginTop: 30 }}>
-            <Text>Form Tambah Produk</Text>
+      <View style={{ flex: 2, marginTop: 50, marginLeft:10, marginRight:10 }}>
+            <Text style={{ marginLeft:100, marginRight:100}}>Form Tambah Produk</Text>
             <TextInput
+                style={{padding:10}}
                 placeholder="Nama Produk"
                 value={produk}
                 onChangeText={(text) => setProduct({ ...product, produk: text })}
             />
             <TextInput
+                style={{padding:10}}
                 placeholder="Harga"
                 value={harga}
                 onChangeText={(text) => setProduct({ ...product, harga: text })}
             />
             <TextInput
+                style={{padding:10}}
                 placeholder="Stok"
                 value={stok}
                 onChangeText={(text) => setProduct({ ...product, stok: text })}

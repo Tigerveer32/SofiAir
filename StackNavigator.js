@@ -13,7 +13,8 @@ import RegisterScreen from "./src/Screens/register/Register";
 import DashboardScreen from "./src/Screens/dashboard/Dashboard";
 import ProfileScreen from "./src/Screens/profil/Profil";
 import TambahProdukScreen from "./src/Screens/tambahProduk/TambahProdukScreen";
-
+import EditProdukScreen from "./src/Screens/editProduk/EditProduk";
+import Splashscreen from "./src/components/splash/Splash";
 
 const StackNavigator = () => {
     const Tab = createBottomTabNavigator();
@@ -87,6 +88,11 @@ const StackNavigator = () => {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen
+              name="Splash"
+              component={Splashscreen}
+              options={{ headerShown: false }}
+            ></Stack.Screen>
+            <Stack.Screen
               name="Login"
               component={LoginScreen}
               options={{ headerShown: false }}
@@ -106,6 +112,12 @@ const StackNavigator = () => {
             component={TambahProdukScreen}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="EditProdukScreen"
+            component={EditProdukScreen}
+            options={{ headerShown: false }}
+          ></Stack.Screen>
+
           </Stack.Navigator>
         </NavigationContainer>
             );

@@ -125,7 +125,7 @@ const LoginScreen = () => {
                 secureTextEntry={true}
                 placeholder="Password"
                 placeholderTextColor={"black"}
-                returnKeyType="search"
+                returnKeyType="done"
                 onSubmitEditing={()=>{
 
                 }}
