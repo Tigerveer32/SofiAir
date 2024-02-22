@@ -8,7 +8,6 @@ import CardDashboardProduct from "../../components/cart/Card_Dashboard";
 const Head_Table = ["No", "Nama Produk", "Harga", "Stok Update"];
 
 export default function DashboardScreen({ navigation }) {
-  const [stok, setStok] = useState([]);
   const [productData, setProductData] = useState([]);
 
   // Fetch Data dari firebase
@@ -16,7 +15,7 @@ export default function DashboardScreen({ navigation }) {
     const fetchProductData = async () => {
       try {
         const docSnap = await getDocs(collection(db, "listProduct"));
-        const productList = docSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const productList = docSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Set stok value from params
         setProductData(productList);
 
         // Listen for real-time updates
