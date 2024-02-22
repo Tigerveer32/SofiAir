@@ -27,55 +27,69 @@ const StackNavigator = () => {
     return (
       <Tab.Navigator>
         <Tab.Screen
-            name="Transaksi"
-            component={TransaksiScreen}
-            options={{
-              tabBarLabel: "Home",
-              headerShown: false,
-              tabBarIcon: ({ focused }) =>
-                focused ? (
-                  <Entypo name="home" size={24} color="royalblue" />
-                ) : (
-                  <AntDesign name="home" size={24} color="black" />
-                ),
-            }}
-          />
+          name="Transaksi"
+          component={TransaksiScreen}
+          options={{
+            tabBarLabel: "Home",
+            headerShown: false,
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Entypo name="home" size={24} color="royalblue" />
+              ) : (
+                <AntDesign name="home" size={24} color="black" />
+              ),
+          }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="person" size={24} color="royalblue" />
+              ) : (
+                <Ionicons name="person" size={24} color="black" />
+              ),
+          }}
+        />
       </Tab.Navigator>
-    )
+    );
   }
 
   function BottomTabs() {
     return (
       <Tab.Navigator>
-          <Tab.Screen
-            name="dashboard"
-            component={DashboardScreen}
-            options={{
-              tabBarLabel: "Dashboard",
-              headerShown: false,
-              tabBarIcon: ({ focused }) =>
-                focused ? (
-                  <Ionicons name="home" size={24} color="royalblue" />
-                ) : (
-                  <Ionicons name="home" size={24} color="black" />
-                ),
-            }}
-          />
-          
-          <Tab.Screen
-            name="Profile"
-            component={ProfileScreen}
-            options={{
-              tabBarLabel: "Profile",
-              headerShown: false,
-              tabBarIcon: ({ focused }) =>
-                focused ? (
-                  <Ionicons name="person" size={24} color="royalblue" />
-                ) : (
-                  <Ionicons name="person" size={24} color="black" />
-                ),
-            }}
-          />
+        <Tab.Screen
+          name="dashboard"
+          component={DashboardScreen}
+          options={{
+            tabBarLabel: "Dashboard",
+            headerShown: false,
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="home" size={24} color="royalblue" />
+              ) : (
+                <Ionicons name="home" size={24} color="black" />
+              ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <Ionicons name="person" size={24} color="royalblue" />
+              ) : (
+                <Ionicons name="person" size={24} color="black" />
+              ),
+          }}
+        />
       </Tab.Navigator>
     );
   }
@@ -102,7 +116,7 @@ const StackNavigator = () => {
           name="Loading"
           component={LoadingScreen}
           options={{ headerShown: false }}
-          ></Stack.Screen>
+        ></Stack.Screen>
         <Stack.Screen
           name="Main"
           component={BottomTabs}

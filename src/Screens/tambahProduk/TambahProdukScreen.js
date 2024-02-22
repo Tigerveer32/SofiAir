@@ -38,12 +38,13 @@ export default function TambahProdukScreen ({navigation}) {
 
     const tambahProduk = async () => {
         try {
+            const stokNumber = Number(stok);
             // Memastikan data produk yang dikirimkan sebagai objek biasa
             const produkData = {
                 productId: product.productId,
                 harga: harga,
                 produk: produk,
-                stok: stok
+                stok: stokNumber
             };
             // Memanggil fungsi handleTambahProduk dengan data produk
             await handleTambahProduk(produkData);
