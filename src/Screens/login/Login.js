@@ -59,7 +59,7 @@ const LoginScreen = () => {
       try {
         const unsubscribe = auth.onAuthStateChanged((authUser) => {
           if (authUser) {
-            navigation.replace("Main");
+            navigation.replace("Loading");
           }
         });
   

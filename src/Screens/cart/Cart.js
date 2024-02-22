@@ -44,7 +44,7 @@ export default function CartScreen({ navigation }) {
       <View>
       <Button
         title="Checkout"
-        onPress={() => navigation.navigate("CheckoutScreen", { totalPayment: totalPayment })}
+        onPress={() => navigation.navigate("CheckoutScreen", { totalPayment: totalPayment, productData: productData})}
       />
       </View>
     </View>

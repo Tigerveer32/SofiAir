@@ -1,12 +1,41 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from '../../../firebase';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CheckoutScreen({ route, navigation }) {
-    const { totalPayment } = route.params;
-    const handleCheckout = () => {
-        navigation.navigate('Main')
-    // Handle the checkout process here
-    alert('Checkout complete!');
+  const { totalPayment, productData } = route.params;
+
+  const handleCheckout = async () => {
+    try {
+      // Iterate over each product in the cart
+      for (let product of productData) {
+        // Fetch the current stock from Firebase
+        const docRef = doc(db, "listProduct", product.productId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          const currentStock = data.stok;
+
+          // Subtract the quantity from the cart
+          const newStock = currentStock - product.qty;
+
+          // Update the stock in Firebase
+          await updateDoc(docRef, { stok: newStock });
+        } else {
+          console.log("No such document!");
+        }
+      }
+
+      // Clear the cart
+      await AsyncStorage.removeItem('produkSaved');
+      alert('Checkout complete!');
+      navigation.navigate('Karyawan');
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
   };
 
   return (

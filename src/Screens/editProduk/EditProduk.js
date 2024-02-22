@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
-import { handleTambahProduk } from '../../../firebase'; 
 import { doc,getDocs, collection,onSnapshot } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import CardEditProduct from '../../components/cart/Card_EditProduct';
@@ -8,11 +7,7 @@ import CardEditProduct from '../../components/cart/Card_EditProduct';
 const Head_Table = ["No", "Nama Produk", "Harga", "Stok", "Action"];
 
 export default function EditProdukScreen({navigation}) {
-    const [harga, setHarga] = useState("");
-    const [produk, setProduk] =useState("");
-    const [stok, setStok] = useState("");
     const [productData, setProductData] = useState([]);
-
     useEffect(() => {
         const fetchProductData = async () => {
           try {

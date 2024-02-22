@@ -7,42 +7,91 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Card, Button } from "react-native-elements";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs ,onSnapshot} from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useSelector, useDispatch } from "react-redux";
-import { cartActions } from "../../store/cartSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TransaksiScreen = ({ navigation }) => {
   const [lProdukLength, setLProdukLength] = useState(0);
+  const [productData, setProductData] = useState([]);
 
   useEffect(() => {
-    const fetchLProdukLength = async () => {
+    const fetchProductData = async () => {
       try {
-        const produkSaved = await AsyncStorage.getItem("produkSaved");
-        const parsedProduk = JSON.parse(produkSaved);
-        const length = parsedProduk ? parsedProduk.length : 0;
-        setLProdukLength(length);
+        const produk = await AsyncStorage.getItem("produkSaved");
+        if (produk !== null) {
+          const parsedProduk = JSON.parse(produk);
+          setProductData(parsedProduk);
+        }
       } catch (e) {
-        console.error("Error fetching produkSaved:", e);
+        console.error(e);
       }
     };
-    fetchLProdukLength();
-  }, [lProdukLength]);
+    fetchProductData();
+  }, []);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    const productLength = productData.reduce((total, product) => total + product.qty, 0);
+    setLProdukLength(productLength);
+  }, [productData]);
 
-  const handleDelete = async () => {
+  const fetchProductQty = async (productId) => {
     try {
-      await AsyncStorage.removeItem("produkSaved");
+      const produk = await AsyncStorage.getItem("produkSaved");
+      if (produk !== null) {
+        const parsedProduk = JSON.parse(produk);
+        const product = parsedProduk.find(product => product.productId === productId);
+        if (product) {
+          return product.qty;
+        }
+      }
     } catch (e) {
-      // remove error
+      console.error(e);
     }
+    return 0;
+  };
 
-    console.log("Done.");
+  const handleDeleteFromCart = async (productId) => {
+    try {
+      // Find the product in productData
+      const productIndex = productData.findIndex(product => product.productId === productId);
+      if (productIndex !== -1) {
+        const product = productData[productIndex];
+        let newProductData;
+  
+        if (product.qty > 1) {
+          // Decrease the quantity by 1
+          const newProduct = { ...product, qty: product.qty - 1 };
+          newProductData = [...productData];
+          newProductData[productIndex] = newProduct;
+        } else {
+          // Remove the product from the cart
+          newProductData = productData.filter(product => product.productId !== productId);
+        }
+        setProductData(newProductData);
+  
+        // Save the new productData to AsyncStorage
+        await AsyncStorage.setItem('produkSaved', JSON.stringify(newProductData));
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleAddToCart = async (product) => {
+    try {
+      // Check if the product stock is empty
+      if (product.stok === 0) {
+        alert('This product is out of stock!');
+        return;
+      }
+      const currentQty = await fetchProductQty(product.productId);
+      if (currentQty === product.stok) {
+        alert('Cannot add more of this product to the cart!');
+        return;
+      }
+
     await saveProdukCart(
       product.id,
       product.produk,
@@ -51,14 +100,14 @@ const TransaksiScreen = ({ navigation }) => {
     );
     console.log("Product added to cart:", product);
     // Update lProdukLength
-    const produkSaved = await AsyncStorage.getItem("produkSaved");
-    const parsedProduk = JSON.parse(produkSaved);
-    const length = parsedProduk ? parsedProduk.length : 0;
-    setLProdukLength(length);
-  };
+    const newLProdukLength = lProdukLength + product.qty;
+    setLProdukLength(newLProdukLength);
+  } catch (e) {
+    console.error(e);
+  }
+};
 
   const saveProdukCart = async (productId, produk, harga, qty) => {
-    // console.log("Product to be saved:", productId, produk, harga, qty);
     try {
       const product = {
         productId,
@@ -66,8 +115,6 @@ const TransaksiScreen = ({ navigation }) => {
         harga,
         qty,
       };
-
-      console.log("Product to be saved 333:", productId, produk, harga, qty);
       const savedProduk = await AsyncStorage.getItem("produkSaved");
       if (savedProduk !== null) {
         let produkArray = JSON.parse(savedProduk);
@@ -96,19 +143,21 @@ const TransaksiScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "listProduct"));
+    const fetchProducts = () => {
+      const unsubscribe = onSnapshot(collection(db, "listProduct"), (querySnapshot) => {
         const data = [];
         querySnapshot.forEach((doc) => {
           data.push({ id: doc.id, ...doc.data() });
         });
         setProducts(data);
-      } catch (error) {
+      }, (error) => {
         console.error("Error fetching products: ", error);
-      }
+      });
+  
+      // Clean up the listener when the component unmounts
+      return () => unsubscribe();
     };
-
+  
     fetchProducts();
   }, []);
 
@@ -128,7 +177,7 @@ const TransaksiScreen = ({ navigation }) => {
         />
         <Button
           title="delete from Cart"
-          onPress={() => handleDelete(item.productId)}
+          onPress={() => handleDeleteFromCart(item.productId)}
           buttonStyle={styles.addButton}
         />
       </Card>
@@ -150,6 +199,11 @@ const TransaksiScreen = ({ navigation }) => {
         renderItem={renderProductItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.productList}
+      />
+      <Button
+        title="Keranjang"
+        onPress={() => navigation.navigate("CartScreen")}
+        buttonStyle={styles.addButton}
       />
     </View>
   );

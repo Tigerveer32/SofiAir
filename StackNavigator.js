@@ -17,18 +17,16 @@ import EditProdukScreen from "./src/Screens/editProduk/EditProduk";
 import Splashscreen from "./src/components/splash/Splash";
 import CartScreen from "./src/Screens/cart/Cart";
 import CheckoutScreen from "./src/Screens/checkout/Checkout";
+import LoadingScreen from "./src/Screens/loading/Loading";
 
 const StackNavigator = () => {
   const Tab = createBottomTabNavigator();
   const Stack = createNativeStackNavigator();
 
-  const role = "karyawan";
-
-  function BottomTabs() {
+  function KaryawanTabs() {
     return (
       <Tab.Navigator>
-        {role == "karyawan" && (
-          <Tab.Screen
+        <Tab.Screen
             name="Transaksi"
             component={TransaksiScreen}
             options={{
@@ -42,8 +40,13 @@ const StackNavigator = () => {
                 ),
             }}
           />
-        )}
-        {role == "admin" && (
+      </Tab.Navigator>
+    )
+  }
+
+  function BottomTabs() {
+    return (
+      <Tab.Navigator>
           <Tab.Screen
             name="dashboard"
             component={DashboardScreen}
@@ -58,9 +61,7 @@ const StackNavigator = () => {
                 ),
             }}
           />
-        )}
-
-        {role == "admin" && (
+          
           <Tab.Screen
             name="Profile"
             component={ProfileScreen}
@@ -75,7 +76,6 @@ const StackNavigator = () => {
                 ),
             }}
           />
-        )}
       </Tab.Navigator>
     );
   }
@@ -99,8 +99,18 @@ const StackNavigator = () => {
           options={{ headerShown: false }}
         ></Stack.Screen>
         <Stack.Screen
+          name="Loading"
+          component={LoadingScreen}
+          options={{ headerShown: false }}
+          ></Stack.Screen>
+        <Stack.Screen
           name="Main"
           component={BottomTabs}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Karyawan"
+          component={KaryawanTabs}
           options={{ headerShown: false }}
         />
         <Stack.Screen
