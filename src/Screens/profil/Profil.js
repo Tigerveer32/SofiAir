@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, Image } from "react-native";
+import { Button } from "react-native-elements";
 import { auth, db } from "../../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({ navigation }) => {
   const uid = auth.currentUser.uid;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,10 +14,10 @@ const ProfileScreen = ({navigation}) => {
   const handleLogout = async () => {
     try {
       await auth.signOut(); // Melakukan logout pengguna
-      console.log('User logged out successfully');
-      navigation.navigate('Login')
+      console.log("User logged out successfully");
+      navigation.navigate("Login");
     } catch (error) {
-      console.error('Error signing out: ', error);
+      console.error("Error signing out: ", error);
     }
   };
 
@@ -56,42 +57,48 @@ const ProfileScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.profileInfo}>
-        <Image
-          source={{ uri: "https://i.pravatar.cc/300"}}
-          style={styles.userPhoto}
+    <View style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.profileInfo}>
+          <Image
+            source={{ uri: "https://i.pravatar.cc/300" }}
+            style={styles.userPhoto}
+          />
+          <Text style={styles.title}>Profile</Text>
+        </View>
+        <View>
+          <Text>Full Name</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={name}
+          onChangeText={(text) => setName(text)}
         />
-        <Text style={styles.title}>Profile</Text>
+        <View>
+          <Text>Email</Text>
+        </View>
+        <TextInput style={styles.input} value={email} />
+        <View>
+          <Text>Phone</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Phone"
+          value={phone}
+          onChangeText={(text) => setPhone(text)}
+        />
       </View>
-      <View>
-        <Text>Full Name</Text>
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Name"
-        value={name}
-        onChangeText={(text) => setName(text)}
+      <Button
+        title="Update Profile"
+        onPress={handleUpdateProfile}
+        buttonStyle={styles.Button}
       />
-      <View>
-        <Text>Email</Text>
-      </View>
-      <TextInput
-        style={styles.input}
-        value={email}
+      <Button
+        title="Logout"
+        onPress={handleLogout}
+        buttonStyle={styles.Button}
       />
-      <View>
-        <Text>Phone</Text>
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="Phone"
-        value={phone}
-        onChangeText={(text) => setPhone(text)}
-      />
-
-      <Button title="Update Profile" onPress={handleUpdateProfile} />
-      <Button title="Logout" onPress={handleLogout} />
     </View>
   );
 };
@@ -134,6 +141,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16,
     padding: 8,
+  },
+  Button: {
+    borderRadius: 20,
+    backgroundColor: "royalblue",
   },
 });
 

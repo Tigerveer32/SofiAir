@@ -18,6 +18,7 @@ import Splashscreen from "./src/components/splash/Splash";
 import CartScreen from "./src/Screens/cart/Cart";
 import CheckoutScreen from "./src/Screens/checkout/Checkout";
 import LoadingScreen from "./src/Screens/loading/Loading";
+import LaporanAdminScreen from "./src/Screens/laporanAdmin/LaporanAdmin";
 
 const StackNavigator = () => {
   const Tab = createBottomTabNavigator();
@@ -77,6 +78,21 @@ const StackNavigator = () => {
         />
 
         <Tab.Screen
+          name="Laporan"
+          component={LaporanAdminScreen}
+          options={{
+            tabBarLabel: "Laporan",
+            headerShown: false,
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <AntDesign name="filetext1" size={24} color="royalblue" />
+              ) : (
+                <AntDesign name="filetext1" size={24} color="black" />
+              ),
+          }}
+        />
+
+        <Tab.Screen
           name="Profile"
           component={ProfileScreen}
           options={{
@@ -89,7 +105,9 @@ const StackNavigator = () => {
                 <Ionicons name="person" size={24} color="black" />
               ),
           }}
-        />
+        /> 
+
+      
       </Tab.Navigator>
     );
   }

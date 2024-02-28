@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Card, Button } from "react-native-elements";
-import { collection, getDocs ,onSnapshot} from "firebase/firestore";
+import { Entypo } from '@expo/vector-icons';
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase";
-import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TransaksiScreen = ({ navigation }) => {
@@ -32,7 +32,10 @@ const TransaksiScreen = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    const productLength = productData.reduce((total, product) => total + product.qty, 0);
+    const productLength = productData.reduce(
+      (total, product) => total + product.qty,
+      0
+    );
     setLProdukLength(productLength);
   }, [productData]);
 
@@ -41,7 +44,9 @@ const TransaksiScreen = ({ navigation }) => {
       const produk = await AsyncStorage.getItem("produkSaved");
       if (produk !== null) {
         const parsedProduk = JSON.parse(produk);
-        const product = parsedProduk.find(product => product.productId === productId);
+        const product = parsedProduk.find(
+          (product) => product.productId === productId
+        );
         if (product) {
           return product.qty;
         }
@@ -52,60 +57,77 @@ const TransaksiScreen = ({ navigation }) => {
     return 0;
   };
 
-  const handleDeleteFromCart = async (productId) => {
+  const handleDeleteFromCart = async ( productId) => {
     try {
-      // Find the product in productData
-      const productIndex = productData.findIndex(product => product.productId === productId);
+      const product = await AsyncStorage.getItem("produkSaved");
+      const productData = JSON.parse(product)
+
+      const productIndex = productData.findIndex(
+        (product) => product.productId === productId
+      );
+
+      console.log("10", productIndex, productId);
+
       if (productIndex !== -1) {
+        console.log("3");
         const product = productData[productIndex];
         let newProductData;
-  
+
         if (product.qty > 1) {
+          console.log("4");
           // Decrease the quantity by 1
           const newProduct = { ...product, qty: product.qty - 1 };
           newProductData = [...productData];
           newProductData[productIndex] = newProduct;
         } else {
+          console.log("5");
           // Remove the product from the cart
-          newProductData = productData.filter(product => product.productId !== productId);
+          newProductData = productData.filter(
+            (product) => product.productId !== productId
+          );
         }
-        setProductData(newProductData);
-  
+        console.log(newProductData)
         // Save the new productData to AsyncStorage
-        await AsyncStorage.setItem('produkSaved', JSON.stringify(newProductData));
+        await AsyncStorage.setItem(
+          "produkSaved",
+          JSON.stringify(newProductData)
+        );
+        // console.log(newProductData);
+        // // Update the productData state
+        setProductData(newProductData);
       }
     } catch (e) {
       console.error(e);
     }
   };
 
-  const handleAddToCart = async (product) => {
+  const handleAddToCart = async (product, productId) => {
     try {
       // Check if the product stock is empty
       if (product.stok === 0) {
-        alert('This product is out of stock!');
+        alert("This product is out of stock!");
         return;
       }
       const currentQty = await fetchProductQty(product.productId);
       if (currentQty === product.stok) {
-        alert('Cannot add more of this product to the cart!');
+        alert("Cannot add more of this product to the cart!");
         return;
       }
 
-    await saveProdukCart(
-      product.id,
-      product.produk,
-      product.harga,
-      product.qty
-    );
-    console.log("Product added to cart:", product);
-    // Update lProdukLength
-    const newLProdukLength = lProdukLength + product.qty;
-    setLProdukLength(newLProdukLength);
-  } catch (e) {
-    console.error(e);
-  }
-};
+      await saveProdukCart(
+        product.id,
+        product.produk,
+        product.harga,
+        product.qty
+      );
+      console.log("Product added to cart:", product.productId);
+      // Update lProdukLength
+      const newLProdukLength = lProdukLength + product.qty;
+      setLProdukLength(newLProdukLength);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const saveProdukCart = async (productId, produk, harga, qty) => {
     try {
@@ -144,20 +166,24 @@ const TransaksiScreen = ({ navigation }) => {
 
   useEffect(() => {
     const fetchProducts = () => {
-      const unsubscribe = onSnapshot(collection(db, "listProduct"), (querySnapshot) => {
-        const data = [];
-        querySnapshot.forEach((doc) => {
-          data.push({ id: doc.id, ...doc.data() });
-        });
-        setProducts(data);
-      }, (error) => {
-        console.error("Error fetching products: ", error);
-      });
-  
+      const unsubscribe = onSnapshot(
+        collection(db, "listProduct"),
+        (querySnapshot) => {
+          const data = [];
+          querySnapshot.forEach((doc) => {
+            data.push({ id: doc.id, ...doc.data() });
+          });
+          setProducts(data);
+        },
+        (error) => {
+          console.error("Error fetching products: ", error);
+        }
+      );
+
       // Clean up the listener when the component unmounts
       return () => unsubscribe();
     };
-  
+
     fetchProducts();
   }, []);
 
@@ -177,7 +203,10 @@ const TransaksiScreen = ({ navigation }) => {
         />
         <Button
           title="delete from Cart"
-          onPress={() => handleDeleteFromCart(item.productId)}
+          onPress={() => {
+          // console.log(item.productId)
+            handleDeleteFromCart(item.productId);
+          }}
           buttonStyle={styles.addButton}
         />
       </Card>
@@ -186,12 +215,12 @@ const TransaksiScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Shop</Text>
+      <Text style={styles.title}>Transaksi</Text>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("CartScreen")}
       >
-        <Text>Cart ({lProdukLength})</Text>
+        <Entypo name="shopping-cart" size={25} color="black" />
       </TouchableOpacity>
 
       <FlatList
@@ -229,7 +258,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   addButton: {
-    borderRadius: 5,
+    borderRadius: 20,
     backgroundColor: "royalblue",
   },
 });

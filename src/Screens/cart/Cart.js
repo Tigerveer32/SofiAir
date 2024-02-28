@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Button } from "react-native";
+import { Text, View ,StyleSheet} from "react-native";
+import { Button } from "react-native-elements";
 import CardCartScreen from "../../components/cart/Card_Cart";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -44,9 +45,17 @@ export default function CartScreen({ navigation }) {
       <View>
       <Button
         title="Checkout"
-        onPress={() => navigation.navigate("CheckoutScreen", { totalPayment: totalPayment, productData: productData})}
+        onPress={() => navigation.navigate("CheckoutScreen", { totalPayment: totalPayment, productData: productData})} 
+        buttonStyle={styles.Button}
       />
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  Button: {
+    borderRadius: 20,
+    backgroundColor: "royalblue",
+  },
+});

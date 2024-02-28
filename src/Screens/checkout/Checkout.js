@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc,addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from '../../../firebase';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -31,6 +31,16 @@ export default function CheckoutScreen({ route, navigation }) {
 
       // Clear the cart
       await AsyncStorage.removeItem('produkSaved');
+      // Create a new report with the product and timestamp
+      const newReport = {
+        product: productData,
+        totalBayar: totalPayment,
+        tgBayar : serverTimestamp(),
+      };
+
+      // Add the new report to the 'laporan' collection in Firebase
+      await addDoc(collection(db, "laporan"), newReport);
+
       alert('Checkout complete!');
       navigation.navigate('Karyawan');
     } catch (error) {
