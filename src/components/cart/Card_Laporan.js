@@ -46,15 +46,17 @@ export default function CardLaporan(props) {
               }}
             >
               <Text style={{ fontSize: 14 }}>{item.produk}</Text>
-              <Text style={{ fontSize: 14 }}>Rp : {item.harga}</Text>
+              <Text style={{ fontSize: 14 }}>Rp: {item.harga}</Text>
               <Text style={{ fontSize: 14 }}> X </Text>
               <Text style={{ fontSize: 14 }}>{item.qty}</Text>
+              <Text style={{ fontSize: 14 }}> = </Text>
+              <Text style={{ fontSize: 14 }}>Rp: {item.qty*item.harga}</Text>
             </View>
           ))}
           <Text
             style={{ fontSize: 16, fontWeight: "bold", alignSelf: "center" }}
           >
-            Rp : {props.totalBayar}
+           Total Rp: {props.totalBayar}
           </Text>
         </View>
       </View>
