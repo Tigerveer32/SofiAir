@@ -1,40 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, Image } from "react-native";
-import { Button } from "react-native-elements";
+import { View, Text, TextInput, StyleSheet } from "react-native";
+import { Button, Image } from "react-native-elements";
 import { auth, db } from "../../../firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, onSnapshot } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 
 const ProfileScreen = ({ navigation }) => {
-  const uid = auth.currentUser.uid;
+  const currentUser = auth.currentUser;
+  const uid = currentUser ? currentUser.uid : "";
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const uidEmail = currentUser ? currentUser.email : "";
+  const [email, setEmail] = useState(uidEmail);
   const [phone, setPhone] = useState("");
   const [userData, setUserData] = useState({});
 
-  const handleLogout = async () => {
-    try {
-      await auth.signOut(); // Melakukan logout pengguna
-      console.log("User logged out successfully");
-      navigation.navigate("Login");
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
+  const clearUserData = () => {
+    setName("");
+    setEmail("");
+    setPhone("");
+    setUserData({});
   };
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const docRef = doc(db, "users", uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setName(data.name);
-          setEmail(data.email);
-          setPhone(data.phone);
-          setUserData(data);
-        } else {
-          console.log("No such document!");
-        }
+        const unsubscribe = onSnapshot(docRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setName(data.name);
+            setEmail(data.email);
+            setPhone(data.phone);
+            setUserData(data);
+          } else {
+            console.log("No such document!");
+          }
+        });
+
+        return () => unsubscribe(); // Unsubscribe when component unmounts
       } catch (error) {
         console.error("Error fetching document: ", error);
       }
@@ -42,6 +46,18 @@ const ProfileScreen = ({ navigation }) => {
 
     fetchUserData();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut(); // Melakukan logout pengguna
+      console.log("User logged out successfully");
+      clearUserData();
+      await AsyncStorage.removeItem("produkSaved");
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
 
   const handleUpdateProfile = async () => {
     try {
@@ -53,6 +69,7 @@ const ProfileScreen = ({ navigation }) => {
       console.log("Profile updated:", { name, email, phone });
     } catch (error) {
       console.error("Error updating profile: ", error);
+      // Handle failure to update profile
     }
   };
 
@@ -60,12 +77,13 @@ const ProfileScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
         <View style={styles.profileInfo}>
-          <Image
-            source={{ uri: "https://i.pravatar.cc/300" }}
-            style={styles.userPhoto}
-          />
+        <Ionicons name="person" size={50} color="black" />
           <Text style={styles.title}>Profile</Text>
         </View>
+        <View>
+          <Text>Email</Text>
+        </View>
+        <Text style={styles.textEmail}>{email}</Text>
         <View>
           <Text>Full Name</Text>
         </View>
@@ -75,10 +93,6 @@ const ProfileScreen = ({ navigation }) => {
           value={name}
           onChangeText={(text) => setName(text)}
         />
-        <View>
-          <Text>Email</Text>
-        </View>
-        <TextInput style={styles.input} value={email} />
         <View>
           <Text>Phone</Text>
         </View>
@@ -92,6 +106,7 @@ const ProfileScreen = ({ navigation }) => {
       <Button
         title="Update Profile"
         onPress={handleUpdateProfile}
+        disabled={!name && !phone} // Disable button if no changes made
         buttonStyle={styles.Button}
       />
       <Button

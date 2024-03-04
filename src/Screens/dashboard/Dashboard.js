@@ -5,7 +5,7 @@ import { auth, db } from "../../../firebase";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import CardDashboardProduct from "../../components/cart/Card_Dashboard";
 
-const Head_Table = ["No", "Nama Produk", "Harga", "Stok Update"];
+
 
 export default function DashboardScreen({ navigation }) {
   const [productData, setProductData] = useState([]);
@@ -48,14 +48,33 @@ export default function DashboardScreen({ navigation }) {
         
       <Text style={styles.title}>Product</Text>
         <View style={{ flexDirection: "row", backgroundColor: "#CCCCCC" }}>
-          {Head_Table.map((header, index) => (
+        {/* const Head_Table = ["No", "Nama Produk", "Harga", "Stok Update"]; */}
+          {/* {Head_Table.map((header, index) => (
             <View key={index} style={{ padding: 10 }}>
               <Text>{header}</Text>
             </View>
-          ))}
+          ))} */}
+          <View style={{ padding: 10 }}>
+            <Text>No</Text>
+          </View>
+          <View>
+            <Text style={{ padding: 10 }}>Nama Produk</Text>
+          </View>
+          <View>
+            <Text style={{ padding: 10 }}>Harga</Text>
+          </View>
+          <View>
+            <Text style={{ padding: 10, marginLeft:30 }}>Stok</Text>
+          </View>
+          <View>
+            <Text style={{ padding: 10, marginLeft:40 }}>Action</Text>
+          </View>
         </View>
         {productData.map((product, index) => (
-          <CardDashboardProduct {...product} key={index} />
+          <CardDashboardProduct 
+          key={index}
+          product={product}
+          navigation={navigation} />
         ))}
       </View>
       <Button
@@ -63,11 +82,11 @@ export default function DashboardScreen({ navigation }) {
         onPress={() => navigation.navigate("TambahProdukScreen")}
         buttonStyle={styles.Button}
       />
-      <Button
+      {/* <Button
         title="Edit"
         onPress={() => navigation.navigate("EditProdukScreen")}
         buttonStyle={styles.Button}
-      />
+      /> */}
     </View>
   );
 }

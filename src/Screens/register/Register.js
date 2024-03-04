@@ -1,80 +1,126 @@
 import {
-    StyleSheet,
-    Text,
-    View,
-    SafeAreaView,
-    KeyboardAvoidingView,
-    Pressable,
-    TextInput,
-    Alert
-  } from "react-native";
-  import {Picker} from '@react-native-picker/picker';
-  import React, { useState } from "react";
-  import { useNavigation } from "@react-navigation/native";
-  import { createUserWithEmailAndPassword } from "firebase/auth";
-  import { auth, db } from "../../../firebase";
-  import { setDoc, doc } from "firebase/firestore";
-  
-  const RegisterScreen = () => {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [role, setRole] = useState("");
-    const [phone, setPhone] = useState("");
-    const navigation = useNavigation();
-    const register = () => {
-      if ( name === "" || email === "" || password === "" || role == ""  || phone === "") {
-        Alert.alert(
-          "Invalid Detials",
-          "Please enter all the credentials",
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel",
-            },
-            { text: "OK", onPress: () => console.log("OK Pressed") },
-          ],
-          { cancelable: false }
-        );
-      }
-      // Validasi format email
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        Alert.alert("Invalid Email", "Please enter a valid email address.");
-        return;
-      }
-  
-      // Validasi panjang password
-      if (password.length < 6) {
-        Alert.alert(
-          "Invalid Password",
-          "Password must be at least 6 characters long."
-        );
-        return;
-      }
-  
-      // Validasi nomor telepon
-      if (!/^\d+$/.test(phone)) {
-        Alert.alert(
-          "Invalid Phone Number",
-          "Phone number must contain only digits."
-        );
-        return;
-      }
-      createUserWithEmailAndPassword(auth, email, password).then(
-        (userCredentials) => {
-          const user = userCredentials._tokenResponse.email;
-          const uid = auth.currentUser.uid;
-          setDoc(doc(db, "users", `${uid}`), {
-            name: name,
-            email: user,
-            phone: phone,
-            role: role,
-          });
-        }
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Pressable,
+  TextInput,
+  Alert,
+  ScrollView,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import {
+  createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+} from "firebase/auth";
+import { auth, db } from "../../../firebase";
+import { setDoc, doc } from "firebase/firestore";
+
+const RegisterScreen = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [phone, setPhone] = useState("");
+  const navigation = useNavigation();
+
+  const register = async () => {
+    if (
+      name === "" ||
+      email === "" ||
+      password === "" ||
+      role === "" ||
+      phone === ""
+    ) {
+      Alert.alert(
+        "Invalid Details",
+        "Please enter all the credentials",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
       );
-    };
-    return (
+      return;
+    }
+
+    // Validasi format email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      Alert.alert("Invalid Email", "Please enter a valid email address.");
+      return;
+    }
+
+    // Validasi panjang password
+    if (password.length < 6) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must be at least 6 characters long."
+      );
+      return;
+    }
+
+    // Validasi nomor telepon
+    if (!/^\d+$/.test(phone)) {
+      Alert.alert(
+        "Invalid Phone Number",
+        "Phone number must contain only digits."
+      );
+      return;
+    }
+
+    // Periksa apakah email sudah terdaftar
+    try {
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      if (signInMethods.length > 0) {
+        Alert.alert(
+          "Email Already Registered",
+          "This email address is already registered. Please use a different email or login instead."
+        );
+        return;
+      }
+    } catch (error) {
+      console.error("Error checking email registration:", error);
+      Alert.alert(
+        "Email Already Registered",
+          "This email address is already registered. Please use a different email or login instead."
+      );
+      return;
+    }
+
+    // Register user
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredentials) => {
+        const user = userCredentials._tokenResponse.email;
+        const uid = auth.currentUser.uid;
+        setDoc(doc(db, "users", `${uid}`), {
+          name: name,
+          email: user,
+          phone: phone,
+          role: role,
+        });
+      })
+      .then(() => {
+        auth.signOut(); // Melakukan logout pengguna
+        navigation.navigate("Login");
+      })
+      .catch((error) => {
+        console.error("Error signing up:", error);
+        Alert.alert(
+          "Email Already Registered",
+          "This email address is already registered. Please use a different email or login instead."
+        );
+      });
+  };
+
+  return (
+    <ScrollView>
       <SafeAreaView
         style={{
           flex: 1,
@@ -91,21 +137,23 @@ import {
               marginTop: 100,
             }}
           >
-            <Text style={{ color: "royalblue", fontSize: 17, fontWeight: "700" }}>
+            <Text
+              style={{ color: "royalblue", fontSize: 17, fontWeight: "700" }}
+            >
               Register
             </Text>
-  
+
             <Text style={{ marginTop: 15, fontSize: 18, fontWeight: "500" }}>
               Create an Account
             </Text>
           </View>
-  
+
           <View style={{ marginTop: 50 }}>
-          <View>
+            <View>
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 Name
               </Text>
-  
+
               <TextInput
                 value={name}
                 onChangeText={(text) => setName(text)}
@@ -125,7 +173,7 @@ import {
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 Email
               </Text>
-  
+
               <TextInput
                 value={email}
                 onChangeText={(text) => setEmail(text)}
@@ -140,12 +188,12 @@ import {
                 }}
               />
             </View>
-  
+
             <View style={{ marginTop: 15 }}>
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 Password
               </Text>
-  
+
               <TextInput
                 value={password}
                 onChangeText={(text) => setPassword(text)}
@@ -166,7 +214,7 @@ import {
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 Role
               </Text>
-  
+
               <Picker
                 selectedValue={role}
                 onValueChange={(itemValue) => setRole(itemValue)}
@@ -182,12 +230,12 @@ import {
                 <Picker.Item label="Karyawan" value="karyawan" />
               </Picker>
             </View>
-  
+
             <View style={{ marginTop: 15 }}>
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 Phone
               </Text>
-  
+
               <TextInput
                 value={phone}
                 onChangeText={(text) => setPhone(text)}
@@ -203,7 +251,7 @@ import {
               />
             </View>
           </View>
-  
+
           <Pressable
             onPress={register}
             style={{
@@ -227,7 +275,7 @@ import {
               Register
             </Text>
           </Pressable>
-  
+
           <Pressable
             onPress={() => navigation.goBack()}
             style={{ marginTop: 20 }}
@@ -238,9 +286,10 @@ import {
           </Pressable>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    );
-  };
-  
-  export default RegisterScreen;
-  
-  const styles = StyleSheet.create({});
+    </ScrollView>
+  );
+};
+
+export default RegisterScreen;
+
+const styles = StyleSheet.create({});

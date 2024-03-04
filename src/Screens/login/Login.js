@@ -69,7 +69,9 @@ const LoginScreen = () => {
       }
     }, []);
   
-    return (<SafeAreaView
+    return (
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+    <SafeAreaView
         style={{
           flex: 1,
           backgroundColor: "white",
@@ -174,6 +176,7 @@ const LoginScreen = () => {
           </Pressable>
         </KeyboardAvoidingView>
       </SafeAreaView>
+      </ScrollView>
     );
   };
   

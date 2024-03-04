@@ -9,8 +9,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 
-export default function CardDashboardProduct(params) {
-  const [stok, setStok] = useState(""); // Initialize with an empty string
+export default function CardDashboardProduct({ product, navigation }) {// Initialize with an empty string
   const [productData, setProductData] = useState([]);
 
   // Fetch Data dari firebase
@@ -22,7 +21,6 @@ export default function CardDashboardProduct(params) {
           id: doc.id,
           ...doc.data(),
         }));
-        setStok(params?.stok); // Set stok value from params
         setProductData(productList);
         // Listen for real-time updates
         const unsubscribe = onSnapshot(
@@ -35,7 +33,6 @@ export default function CardDashboardProduct(params) {
             setProductData(updatedProductList);
           }
         );
-
         return () => unsubscribe(); // Unsubscribe when component unmounts
       } catch (error) {
         console.error("Error fetching document: ", error);
@@ -44,28 +41,6 @@ export default function CardDashboardProduct(params) {
 
     fetchProductData();
   }, []);
-
-  const handleUpdateProduct = async (productId) => {
-    try {
-      const docRef = doc(db, "listProduct", productId);
-      if (stok === "" || stok === "0") {
-        // Check if stok is empty or "0"
-        alert("Silahkan masukkan jumlah produk");
-        return;
-      }
-      // Convert stok to a number
-      const stokNumber = Number(stok);
-
-      await updateDoc(docRef, {
-        stok: stokNumber,
-      });
-
-      console.log("Product updated:", { stok });
-      alert("Berhasil memperbarui data");
-    } catch (error) {
-      console.error("Error updating product: ", error);
-    }
-  };
 
   return (
     <View
@@ -78,29 +53,35 @@ export default function CardDashboardProduct(params) {
       }}
     >
       <View style={{ padding: 10, marginLeft: 5 }}>
-        <Text>{params?.productId}</Text>
+        <Text>{product?.productId}</Text>
       </View>
       <View style={{ flex: 1, padding: 10, marginRight: 10 }}>
-        <Text>{params?.produk}</Text>
+        <Text>{product?.produk}</Text>
       </View>
       <View style={{ flex: 1, padding: 10 }}>
-        <Text>{params?.harga}</Text>
+        <Text>{product?.harga}</Text>
       </View>
       <View style={{ flex: 1, padding: 10 }}>
-        <TextInput
+        <Text>{product?.stok}</Text>
+        {/* <TextInput
           style={{ height: 30, borderColor: "gray", borderWidth: 1 }}
           onChangeText={(text) => setStok(text)}
           value={String(stok)}
-          placeholder={String(params?.stok)}
+          placeholder={String(product?.stok)}
           keyboardType="numeric"
-        />
+        /> */}
       </View>
       <View style={{ flex: 1, padding: 5 }}>
-        <Button
+      <Button
+        title="Edit"
+        onPress={() => navigation.navigate("EditProdukScreen")}
+        style={{ width: 10 }}
+      />
+        {/* <Button
           title="Simpan"
           onPress={() => handleUpdateProduct(params?.productId)}
           style={{ width: 10 }}
-        />
+        /> */}
       </View>
     </View>
   );

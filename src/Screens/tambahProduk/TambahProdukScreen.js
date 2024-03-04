@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
 import { handleTambahProduk } from '../../../firebase'; 
-import { getDocs, collection } from 'firebase/firestore';
+import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db } from '../../../firebase';
 
 export default function TambahProdukScreen ({navigation}) {
@@ -11,7 +11,8 @@ export default function TambahProdukScreen ({navigation}) {
       produk: '',
       stok: '',
     });
-  
+    const [error, setError] = useState('');
+
     const { harga, produk, stok } = product;
 
     useEffect(() => {
@@ -38,11 +39,26 @@ export default function TambahProdukScreen ({navigation}) {
 
     const tambahProduk = async () => {
         try {
-            const stokNumber = Number(stok);
+            // Validasi apakah nama produk sudah ada
+            const produkQuery = query(collection(db, 'listProduct'), where('produk', '==', produk));
+            const produkSnapshot = await getDocs(produkQuery);
+            if (!produkSnapshot.empty) {
+                setError('Nama produk sudah ada');
+                return;
+            }
+
+            // Validasi harga dan stok harus angka
+            const hargaNumber = parseFloat(harga);
+            const stokNumber = parseFloat(stok);
+            if (isNaN(hargaNumber) || isNaN(stokNumber)) {
+                setError('Harga dan stok harus berupa angka');
+                return;
+            }
+
             // Memastikan data produk yang dikirimkan sebagai objek biasa
             const produkData = {
                 productId: product.productId,
-                harga: harga,
+                harga: hargaNumber,
                 produk: produk,
                 stok: stokNumber
             };
@@ -57,25 +73,42 @@ export default function TambahProdukScreen ({navigation}) {
     return (
       <View style={{ flex: 2, marginTop: 50, marginLeft:10, marginRight:10 }}>
             <Text style={{ marginLeft:100, marginRight:100}}>Form Tambah Produk</Text>
+            <View style={{ padding: 10, marginLeft: 5 }}>
+            <Text>Nama Produk</Text>
             <TextInput
-                style={{padding:10}}
-                placeholder="Nama Produk"
+                style={{ height: 30, borderColor: "gray", borderWidth: 1 }}
+                placeholder="Masukkan Nama Produk"
                 value={produk}
-                onChangeText={(text) => setProduct({ ...product, produk: text })}
-            />
+                onChangeText={(text) => {
+                    setProduct({ ...product, produk: text });
+                    setError('');
+                }}
+                />
+                <Text>Harga</Text>
             <TextInput
-                style={{padding:10}}
+                style={{ height: 30, borderColor: "gray", borderWidth: 1 }}
                 placeholder="Harga"
                 value={harga}
-                onChangeText={(text) => setProduct({ ...product, harga: text })}
-            />
+                onChangeText={(text) => {
+                    setProduct({ ...product, harga: text });
+                    setError('');
+                }}
+                keyboardType="numeric"
+                />
+                <Text>Stok</Text>
             <TextInput
-                style={{padding:10}}
+                style={{ height: 30, borderColor: "gray", borderWidth: 1 }}
                 placeholder="Stok"
                 value={stok}
-                onChangeText={(text) => setProduct({ ...product, stok: text })}
+                onChangeText={(text) => {
+                    setProduct({ ...product, stok: text });
+                    setError('');
+                }}
+                keyboardType="numeric"
             />
+            {error ? <Text style={{ color: 'red' }}>{error}</Text> : null}
             <Button title="Tambah produk" onPress={tambahProduk} />
+            </View>
         </View>
     );
 };

@@ -26,7 +26,6 @@ export default function LaporanAdminScreen({ navigation }) {
       // Clean up the listener when the component unmounts
       return () => unsubscribe();
     };
-
     fetchProducts();
     console.log(JSON.stringify(productData));
   }, []);

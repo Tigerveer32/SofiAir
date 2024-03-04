@@ -216,6 +216,9 @@ const TransaksiScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Transaksi</Text>
+      <View>
+        
+      </View>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("CartScreen")}
