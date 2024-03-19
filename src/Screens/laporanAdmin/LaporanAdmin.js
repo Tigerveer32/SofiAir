@@ -33,7 +33,21 @@ export default function LaporanAdminScreen({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flex: 2, marginTop: 20 }}>
-      <Text style={styles.title}>Laporan Admin</Text>
+        <Text style={styles.title}>Laporan Admin</Text>
+        <View style={{ flexDirection: "row", backgroundColor: "#CCCCCC" }}>
+          <View style={{ padding: 10, marginLeft:10 }}>
+            <Text>No</Text>
+          </View>
+          <View>
+            <Text style={{ padding: 10, marginLeft: 30 }}>Tanggal</Text>
+          </View>
+          <View>
+            <Text style={{ padding: 10, marginLeft: 50 }}>Produk</Text>
+          </View>
+          <View>
+            <Text style={{ padding: 10, marginLeft: 50 }}>Total Harga</Text>
+          </View>
+        </View>
         <FlatList
           data={productData}
           keyExtractor={(item) => item.id}

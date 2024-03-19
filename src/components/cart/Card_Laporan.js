@@ -8,57 +8,64 @@ export default function CardLaporan(props) {
   const fireBaseTime = new Date(
     time.seconds * 1000 + time.nanoseconds / 1000000
   );
-  const date = fireBaseTime.toDateString();
-  const atTime = fireBaseTime.toLocaleTimeString();
+ // Define options for Indonesian date format
+ const options = {  year: 'numeric', month: 'long', day: 'numeric' };
+
+ // Format the date in Indonesian format
+ const date = fireBaseTime.toLocaleDateString('id-ID', options);
+
+
+  // Format totalBayar as number with locale-specific representation
+  const ToBay = props.totalBayar.toLocaleString();
+
 
   return (
-      <View
-        style={{
-          flexDirection: "row",
-          borderBottomWidth: 1,
-          borderColor: "#CCCCCC",
-          marginRight: 5,
-          marginLeft: 10,
-          padding: 10,
-          backgroundColor: "#f8f8f8",
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            padding: 10,
-            margin: 10,
-            backgroundColor: "#fff",
-            borderRadius: 5,
-          }}
-        >
-          <View style={{ flex: 2, alignItems: "center", marginBottom: 10 }}>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-              {date} - {atTime}
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row", // Added flexDirection to display in rows
+        padding: 5,
+        margin: 10,
+        backgroundColor: "#fff",
+        borderRadius: 5,
+      }}
+    >
+      {/* Column 1: Date */}
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <Text style={{ fontSize: 12}}>{date}</Text>
+      </View>
+
+      {/* Column 2: Products */}
+      <View style={{ flex: 2, marginLeft:10 }}>
+        {props.product.map((item) => (
+          <View
+            key={item.id}
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 5,
+            }}
+          >
+            <Text style={{ fontSize: 9 }}>{item.produk}</Text>
+            <Text style={{ fontSize: 10 }}>Rp: {item.harga}</Text>
+            <Text style={{ fontSize: 10 }}> X {item.qty} = </Text>
+            <Text style={{ fontSize: 10 }}>
+              Rp: {item.qty * item.harga}
             </Text>
           </View>
-          {props.product.map((item) => (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 5,
-              }}
-            >
-              <Text style={{ fontSize: 14 }}>{item.produk}</Text>
-              <Text style={{ fontSize: 14 }}>Rp: {item.harga}</Text>
-              <Text style={{ fontSize: 14 }}> X </Text>
-              <Text style={{ fontSize: 14 }}>{item.qty}</Text>
-              <Text style={{ fontSize: 14 }}> = </Text>
-              <Text style={{ fontSize: 14 }}>Rp: {item.qty*item.harga}</Text>
-            </View>
-          ))}
-          <Text
-            style={{ fontSize: 16, fontWeight: "bold", alignSelf: "center" }}
-          >
-           Total Rp: {props.totalBayar}
-          </Text>
-        </View>
+        ))}
       </View>
+
+      {/* Column 3: Total Payment */}
+      <View style={{ flex: 1, marginLeft:20 }}>
+        <Text
+          style={{
+            fontSize: 12,
+          }}
+        >
+          Rp: {ToBay}
+        </Text>
+      </View>
+    </View>
   );
 }

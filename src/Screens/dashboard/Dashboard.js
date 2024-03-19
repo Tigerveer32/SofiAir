@@ -48,12 +48,6 @@ export default function DashboardScreen({ navigation }) {
         
       <Text style={styles.title}>Product</Text>
         <View style={{ flexDirection: "row", backgroundColor: "#CCCCCC" }}>
-        {/* const Head_Table = ["No", "Nama Produk", "Harga", "Stok Update"]; */}
-          {/* {Head_Table.map((header, index) => (
-            <View key={index} style={{ padding: 10 }}>
-              <Text>{header}</Text>
-            </View>
-          ))} */}
           <View style={{ padding: 10 }}>
             <Text>No</Text>
           </View>

@@ -63,13 +63,6 @@ export default function CardDashboardProduct({ product, navigation }) {// Initia
       </View>
       <View style={{ flex: 1, padding: 10 }}>
         <Text>{product?.stok}</Text>
-        {/* <TextInput
-          style={{ height: 30, borderColor: "gray", borderWidth: 1 }}
-          onChangeText={(text) => setStok(text)}
-          value={String(stok)}
-          placeholder={String(product?.stok)}
-          keyboardType="numeric"
-        /> */}
       </View>
       <View style={{ flex: 1, padding: 5 }}>
       <Button
