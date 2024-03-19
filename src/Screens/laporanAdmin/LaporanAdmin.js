@@ -1,7 +1,7 @@
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { Button } from "react-native-elements";
 import { db } from "../../../firebase";
-import { getDoc, collection, onSnapshot } from "firebase/firestore";
+import { getDoc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import CardLaporan from "../../components/cart/Card_Laporan";
 
@@ -10,26 +10,24 @@ export default function LaporanAdminScreen({ navigation }) {
 
   useEffect(() => {
     const fetchProducts = () => {
-      const unsubscribe = onSnapshot(
-        collection(db, "laporan"),
-        (querySnapshot) => {
-          const data = [];
-          querySnapshot.forEach((doc) => {
-            data.push({ id: doc.id, ...doc.data() });
-          });
-          setProductData(data);
-        },
-        (error) => {
-          console.error("Error fetching products: ", error);
-        }
-      );
+      const q = query(collection(db, "laporan"), orderBy("tgBayar", "desc")); // Mengurutkan berdasarkan tanggal terbaru
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
+        setProductData(data);
+      }, (error) => {
+        console.error("Error fetching products: ", error);
+      });
       // Clean up the listener when the component unmounts
       return () => unsubscribe();
     };
     fetchProducts();
-    console.log(JSON.stringify(productData));
   }, []);
+
   console.log("DATA", productData);
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flex: 2, marginTop: 20 }}>
@@ -51,9 +49,9 @@ export default function LaporanAdminScreen({ navigation }) {
         <FlatList
           data={productData}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             console.log(item);
-            return <CardLaporan {...item} />;
+            return <CardLaporan index={index} {...item} />;
           }}
         />
       </View>
