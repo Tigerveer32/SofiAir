@@ -1,77 +1,82 @@
 import {
-    StyleSheet,
-    View,
-    Image,
-    Text,
-    SafeAreaView,
-    KeyboardAvoidingView,
-    TextInput,
-    Pressable,
-    Alert,
-    ScrollView,
-  } from "react-native";
-import React, { useState, useEffect } from "react";
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  TextInput,
+  Pressable,
+  Alert,
+  ScrollView,
+} from "react-native";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { auth } from "../../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import LoadingContext from "../../components/Loading/LoadingContext";
+
 const LoginScreen = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const navigation = useNavigation("");
-  
-    const login = () => {
-      if (email === "" || password === "") {
-        Alert.alert(
-          "Invalid Detials",
-          "Invalid email or password. Please check and try again.",
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel",
-            },
-            { text: "OK", onPress: () => console.log("OK Pressed") },
-          ],
-          { cancelable: false }
-        );
-      }
-  
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        Alert.alert("Invalid Email", "Please enter a valid email address.");
-        return;
-      }
-  
-      if (password.length < 6) {
-        Alert.alert(
-          "Invalid Password",
-          "Password must be at least 6 characters long."
-        );
-        return;
-      }
-      signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-        console.log("user credential", userCredential);
-        const user = userCredential.user;
-        console.log("user details", user);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigation = useNavigation("");
+  const { isLoading,setIsLoading } = useContext(LoadingContext);
+
+  const login = () => {
+    setIsLoading(true);
+    if (email === "" || password === "") {
+      Alert.alert(
+        "Invalid Detials",
+        "Invalid email or password. Please check and try again.",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
+      );
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      Alert.alert("Invalid Email", "Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must be at least 6 characters long."
+      );
+      return;
+    }
+    signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+      console.log("user credential", userCredential);
+      const user = userCredential.user;
+      console.log("user details", user);
+      setIsLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    try {
+      const unsubscribe = auth.onAuthStateChanged((authUser) => {
+        if (authUser) {
+          navigation.replace("Loading");
+        }
       });
-    };
-  
-    useEffect(() => {
-      try {
-        const unsubscribe = auth.onAuthStateChanged((authUser) => {
-          if (authUser) {
-            navigation.replace("Loading");
-          }
-        });
-  
-        return unsubscribe;
-      } catch (e) {
-        console.log(e);
-      }
-    }, []);
-  
-    return (
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-    <SafeAreaView
+
+      return unsubscribe;
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
+  return (
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <SafeAreaView
         style={{
           flex: 1,
           backgroundColor: "white",
@@ -88,19 +93,19 @@ const LoginScreen = () => {
           >
             <Image
               source={require("../../../assets/logo.png")}
-              style={{ width: '50%', height: '50%' }}
+              style={{ width: "50%", height: "50%" }}
             />
             <Text style={{ marginTop: 0, fontSize: 18, fontWeight: "500" }}>
               Silahkan masukkan email dan password anda untuk login
             </Text>
           </View>
-  
-          <View style={{ marginLeft:  40, marginRight: 20 }}>
+
+          <View style={{ marginLeft: 40, marginRight: 20 }}>
             <View>
-              <Text style={{ fontSize: 18, fontWeight: "600", color: "gray"}}>
+              <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 Email
               </Text>
-  
+
               <TextInput
                 value={email}
                 onChangeText={(text) => setEmail(text)}
@@ -115,12 +120,12 @@ const LoginScreen = () => {
                 }}
               />
             </View>
-  
+
             <View style={{ marginTop: 5 }}>
               <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>
                 Password
               </Text>
-  
+
               <TextInput
                 value={password}
                 onChangeText={(text) => setPassword(text)}
@@ -128,9 +133,7 @@ const LoginScreen = () => {
                 placeholder="Password"
                 placeholderTextColor={"black"}
                 returnKeyType="done"
-                onSubmitEditing={()=>{
-
-                }}
+                onSubmitEditing={() => {}}
                 style={{
                   fontSize: password ? 18 : 18,
                   borderBottomWidth: 1,
@@ -141,18 +144,20 @@ const LoginScreen = () => {
               />
             </View>
           </View>
-  
+
           <Pressable
             onPress={login}
             style={{
               width: 200,
-              backgroundColor: "royalblue",
+              backgroundColor: isLoading ? "gray" : "royalblue", // Change button color when loading
               padding: 15,
               borderRadius: 7,
               marginTop: 50,
               marginLeft: "auto",
               marginRight: "auto",
+              opacity: isLoading ? 0.5 : 1, // Change button opacity when loading
             }}
+            disabled={isLoading} // Disable button when loading
           >
             <Text
               style={{
@@ -165,7 +170,7 @@ const LoginScreen = () => {
               Login
             </Text>
           </Pressable>
-  
+
           <Pressable
             onPress={() => navigation.navigate("Register")}
             style={{ marginTop: 20 }}
@@ -176,10 +181,10 @@ const LoginScreen = () => {
           </Pressable>
         </KeyboardAvoidingView>
       </SafeAreaView>
-      </ScrollView>
-    );
-  };
-  
-  export default LoginScreen;
-  
-  const styles = StyleSheet.create({});
+    </ScrollView>
+  );
+};
+
+export default LoginScreen;
+
+const styles = StyleSheet.create({});

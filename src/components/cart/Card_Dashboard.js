@@ -1,5 +1,5 @@
 import { Button, Text, TextInput, View } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { db } from "../../../firebase";
 import {
   collection,
@@ -8,10 +8,20 @@ import {
   updateDoc,
   onSnapshot,
 } from "firebase/firestore";
+import LoadingContext from "../Loading/LoadingContext";
+import { useFocusEffect } from '@react-navigation/native';
 
-export default function CardDashboardProduct({ product, navigation }) {// Initialize with an empty string
+export default function CardDashboardProduct({ product, navigation }) {
+  // Initialize with an empty string
   const [productData, setProductData] = useState([]);
+  const { isLoading, setIsLoading } = useContext(LoadingContext);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsLoading(false);
+      return () => {};  // optional cleanup function
+    }, [])
+  );
   // Fetch Data dari firebase
   useEffect(() => {
     const fetchProductData = async () => {
@@ -48,33 +58,19 @@ export default function CardDashboardProduct({ product, navigation }) {// Initia
         flexDirection: "row",
         borderBottomWidth: 1,
         borderColor: "#CCCCCC",
-        marginRight: 5,
-        marginLeft: 10,
       }}
     >
-      <View style={{ padding: 10, marginLeft: 5 }}>
+      <View style={{ padding: 10, marginLeft: 10 }}>
         <Text>{product?.productId}</Text>
       </View>
-      <View style={{ flex: 1, padding: 10, marginRight: 10 }}>
+      <View style={{ flex: 1, padding: 10, marginLeft: 20 }}>
         <Text>{product?.produk}</Text>
       </View>
-      <View style={{ flex: 1, padding: 10 }}>
+      <View style={{ flex: 1, padding: 10, marginLeft:40 }}>
         <Text>{product?.harga}</Text>
       </View>
       <View style={{ flex: 1, padding: 10 }}>
         <Text>{product?.stok}</Text>
-      </View>
-      <View style={{ flex: 1, padding: 5 }}>
-      <Button
-        title="Edit"
-        onPress={() => navigation.navigate("EditProdukScreen")}
-        style={{ width: 10 }}
-      />
-        {/* <Button
-          title="Simpan"
-          onPress={() => handleUpdateProduct(params?.productId)}
-          style={{ width: 10 }}
-        /> */}
       </View>
     </View>
   );

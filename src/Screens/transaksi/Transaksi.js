@@ -217,7 +217,6 @@ const TransaksiScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Transaksi</Text>
       <View>
-        
       </View>
       <TouchableOpacity
         style={styles.button}

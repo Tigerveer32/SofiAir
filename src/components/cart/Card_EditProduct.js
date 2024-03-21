@@ -120,7 +120,7 @@ export default function CardEditProduct(params) {
       <View style={{ flex: 1, padding: 10 }}>
         <TextInput
           style={{ height: 30, borderColor: "gray", borderWidth: 1 }}
-          placeholder={params?.harga}
+          placeholder={params?.harga.toString()}
           onChangeText={(text) => setHarga(text)}
           value={harga}
         />

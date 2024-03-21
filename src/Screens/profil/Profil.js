@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Button, Image } from "react-native-elements";
 import { auth, db } from "../../../firebase";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import LoadingContext from "../../components/Loading/LoadingContext";
 
 const ProfileScreen = ({ navigation }) => {
   const currentUser = auth.currentUser;
@@ -14,6 +15,7 @@ const ProfileScreen = ({ navigation }) => {
   const [email, setEmail] = useState(uidEmail);
   const [phone, setPhone] = useState("");
   const [userData, setUserData] = useState({});
+  const { isLoading, setIsLoading } = useContext(LoadingContext);
 
   const clearUserData = () => {
     setName("");
@@ -60,6 +62,7 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handleUpdateProfile = async () => {
+    setIsLoading(true);
     try {
       const docRef = doc(db, "users", uid);
       await updateDoc(docRef, {
@@ -67,8 +70,10 @@ const ProfileScreen = ({ navigation }) => {
         phone: phone,
       });
       console.log("Profile updated:", { name, email, phone });
+      setIsLoading(false);
     } catch (error) {
       console.error("Error updating profile: ", error);
+      setIsLoading(false);
       // Handle failure to update profile
     }
   };
@@ -77,7 +82,7 @@ const ProfileScreen = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
         <View style={styles.profileInfo}>
-        <Ionicons name="person" size={50} color="black" />
+          <Ionicons name="person" size={50} color="black" />
           <Text style={styles.title}>Profile</Text>
         </View>
         <View>
@@ -106,13 +111,15 @@ const ProfileScreen = ({ navigation }) => {
       <Button
         title="Update Profile"
         onPress={handleUpdateProfile}
-        disabled={!name && !phone} // Disable button if no changes made
+        disabled={(!name && !phone) || isLoading} // Disable button if no changes made or if loading
         buttonStyle={styles.Button}
+        loading={isLoading} // Show loading spinner if isLoading is true
       />
+
       <Button
         title="Logout"
         onPress={handleLogout}
-        buttonStyle={styles.Button}
+        buttonStyle={[styles.Button]} // Apply logoutButton style
       />
     </View>
   );
@@ -160,6 +167,12 @@ const styles = StyleSheet.create({
   Button: {
     borderRadius: 20,
     backgroundColor: "royalblue",
+  },
+
+  logoutButton: {
+    position: "absolute", // Position button absolutely
+    top: 30, // 10 pixels from the top
+    left: 20, // 10 pixels from the left
   },
 });
 
