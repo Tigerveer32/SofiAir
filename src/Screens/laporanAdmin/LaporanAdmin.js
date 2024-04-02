@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Modal,
   Platform,
+  Dimensions,
   TouchableOpacity,
 } from "react-native";
 import { Button } from "react-native-elements";
@@ -24,6 +25,10 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Feather } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
+
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function LaporanAdminScreen({ navigation }) {
   const [productData, setProductData] = useState([]);
@@ -226,11 +231,19 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     color: "royalblue",
     backgroundColor: "royalblue",
+    width: windowWidth * 0.8, // 80% of the window width
+    alignSelf: 'center', // Center the button horizontally
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: windowWidth * 0.1, // 10% of the window width
   },
 });

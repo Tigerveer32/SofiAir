@@ -4,6 +4,7 @@ import {
   View,
   StyleSheet,
   Touchable,
+  Dimensions,
   TouchableOpacity,
 } from "react-native";
 import { Button } from "react-native-elements";
@@ -13,6 +14,9 @@ import CardDashboardProduct from "../../components/cart/Card_Dashboard";
 import { useFocusEffect } from "@react-navigation/native";
 import LoadingContext from "../../components/Loading/LoadingContext";
 import { FontAwesome6 } from "@expo/vector-icons";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 export default function DashboardScreen({ navigation }) {
   const [productData, setProductData] = useState([]);
@@ -76,14 +80,14 @@ export default function DashboardScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "row", backgroundColor: "#CCCCCC" }}>
-          <View style={{ padding: 10,marginLeft:10 }}>
+          <View style={{ padding: 10, marginLeft: 10 }}>
             <Text>No</Text>
           </View>
           <View>
-            <Text style={{ padding: 10 ,marginLeft:10}}>Nama Produk</Text>
+            <Text style={{ padding: 10, marginLeft: 10 }}>Nama Produk</Text>
           </View>
           <View>
-            <Text style={{ padding: 10 ,marginLeft:40}}>Harga</Text>
+            <Text style={{ padding: 10, marginLeft: 40 }}>Harga</Text>
           </View>
           <View>
             <Text style={{ padding: 10, marginLeft: 45 }}>Stok</Text>
@@ -116,11 +120,19 @@ const styles = StyleSheet.create({
   Button: {
     borderRadius: 20,
     backgroundColor: "royalblue",
+    width: windowWidth * 0.8, // 80% of the window width
+    alignSelf: "center", // Center the button horizontally
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: windowWidth * 0.1, // 10% of the window width
   },
 });

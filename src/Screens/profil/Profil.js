@@ -1,11 +1,22 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { Button, Image } from "react-native-elements";
 import { auth, db } from "../../../firebase";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingContext from "../../components/Loading/LoadingContext";
+import { AntDesign } from "@expo/vector-icons";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const ProfileScreen = ({ navigation }) => {
   const currentUser = auth.currentUser;
@@ -80,6 +91,17 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
+      <View style={{ alignItems: "flex-end" }}>
+        <TouchableOpacity onPress={handleLogout}>
+          <AntDesign name="logout" size={24} color="black" />
+          <Text>Logout</Text>
+        </TouchableOpacity>
+        {/* <Button
+        title="Logout"
+        onPress={handleLogout}
+        buttonStyle={[styles.Button]} // Apply logoutButton style
+      /> */}
+      </View>
       <View style={styles.container}>
         <View style={styles.profileInfo}>
           <Ionicons name="person" size={50} color="black" />
@@ -115,12 +137,6 @@ const ProfileScreen = ({ navigation }) => {
         buttonStyle={styles.Button}
         loading={isLoading} // Show loading spinner if isLoading is true
       />
-
-      <Button
-        title="Logout"
-        onPress={handleLogout}
-        buttonStyle={[styles.Button]} // Apply logoutButton style
-      />
     </View>
   );
 };
@@ -130,15 +146,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: windowWidth * 0.1, // 10% of the window width
   },
   profileInfo: {
     alignItems: "center",
     marginBottom: 20,
   },
   userPhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: windowWidth * 0.2, // 20% of the window width
+    height: windowWidth * 0.2, // 20% of the window width
+    borderRadius: (windowWidth * 0.2) / 2, // Half of the width to make it a circle
     marginBottom: 10,
   },
   title: {
@@ -158,7 +175,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    width: 300,
+    width: windowWidth * 0.8, // 80% of the window width
     borderColor: "gray",
     borderWidth: 1,
     marginBottom: 16,
@@ -167,8 +184,9 @@ const styles = StyleSheet.create({
   Button: {
     borderRadius: 20,
     backgroundColor: "royalblue",
+    width: windowWidth * 0.8, // 80% of the window width
+    alignSelf: "center", // Center the button horizontally
   },
-
   logoutButton: {
     position: "absolute", // Position button absolutely
     top: 30, // 10 pixels from the top
