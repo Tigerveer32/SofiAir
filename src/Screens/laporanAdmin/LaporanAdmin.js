@@ -12,7 +12,6 @@ import { Button } from "react-native-elements";
 import * as React from "react";
 import { db } from "../../../firebase";
 import {
-  getDoc,
   collection,
   onSnapshot,
   query,
@@ -26,9 +25,8 @@ import * as Sharing from "expo-sharing";
 import { Feather } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system";
 
-
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 export default function LaporanAdminScreen({ navigation }) {
   const [productData, setProductData] = useState([]);
@@ -64,6 +62,7 @@ export default function LaporanAdminScreen({ navigation }) {
 
   const filterData = () => {
     const filtered = productData.filter((item) => {
+      console.log(item.tgBayar.nanoseconds)
       const itemDate = item.tgBayar.toDate();
       return itemDate >= startDate && itemDate <= endDate;
     });
@@ -152,7 +151,6 @@ export default function LaporanAdminScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-        {/* <Button title="Print to PDF file" onPress={printToPDF} /> */}
         <View style={{ flexDirection: "row", backgroundColor: "#CCCCCC" }}>
           <View style={{ padding: 10, marginLeft: 10 }}>
             <Text>No</Text>
@@ -232,7 +230,7 @@ const styles = StyleSheet.create({
     color: "royalblue",
     backgroundColor: "royalblue",
     width: windowWidth * 0.8, // 80% of the window width
-    alignSelf: 'center', // Center the button horizontally
+    alignSelf: "center", // Center the button horizontally
   },
   title: {
     fontSize: 24,
@@ -242,8 +240,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: windowWidth * 0.1, // 10% of the window width
   },
 });

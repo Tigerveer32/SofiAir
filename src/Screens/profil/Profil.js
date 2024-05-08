@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Button, Image } from "react-native-elements";
 import { auth, db } from "../../../firebase";
@@ -61,15 +62,32 @@ const ProfileScreen = ({ navigation }) => {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await auth.signOut(); // Melakukan logout pengguna
-      console.log("User logged out successfully");
-      clearUserData();
-      await AsyncStorage.removeItem("produkSaved");
-      navigation.navigate("Login");
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
+    Alert.alert(
+      "Konfirmasi",
+      "Anda yakin ingin keluar?",
+      [
+        {
+          text: "Batal",
+          style: "cancel",
+        },
+        {
+          text: "Ya",
+          onPress: async () => {
+            try {
+              await auth.signOut(); // Melakukan logout pengguna
+              console.log("User logged out successfully");
+              clearUserData();
+              await AsyncStorage.removeItem("produkSaved");
+              navigation.navigate("Login");
+            } catch (error) {
+              console.error("Error signing out: ", error);
+            }
+          },
+          style: "destructive",
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const handleUpdateProfile = async () => {
@@ -96,11 +114,6 @@ const ProfileScreen = ({ navigation }) => {
           <AntDesign name="logout" size={24} color="black" />
           <Text>Logout</Text>
         </TouchableOpacity>
-        {/* <Button
-        title="Logout"
-        onPress={handleLogout}
-        buttonStyle={[styles.Button]} // Apply logoutButton style
-      /> */}
       </View>
       <View style={styles.container}>
         <View style={styles.profileInfo}>

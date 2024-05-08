@@ -6,6 +6,7 @@ export default function CardLaporan(props) {
   const fireBaseTime = new Date(
     time.seconds * 1000 + time.nanoseconds / 1000000
   );
+  
   const options = { year: "numeric", month: "long", day: "numeric" };
   const date = fireBaseTime.toLocaleDateString("id-ID", options);
   const ToBay = props.totalBayar.toLocaleString();

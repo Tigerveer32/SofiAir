@@ -57,25 +57,6 @@ const RegisterScreen = () => {
       return;
     }
 
-    // Validasi panjang password
-    if (password.length < 6) {
-      Alert.alert(
-        "Invalid Password",
-        "Password must be at least 6 characters long."
-      );
-      return;
-    }
-
-    // Validasi nomor telepon
-    if (!/^\d+$/.test(phone)) {
-      Alert.alert(
-        "Invalid Phone Number",
-        "Phone number must contain only digits."
-      );
-      return;
-    }
-
-    // Periksa apakah email sudah terdaftar
     try {
       const signInMethods = await fetchSignInMethodsForEmail(auth, email);
       if (signInMethods.length > 0) {
@@ -89,26 +70,55 @@ const RegisterScreen = () => {
       console.error("Error checking email registration:", error);
       Alert.alert(
         "Email Already Registered",
-          "This email address is already registered. Please use a different email or login instead."
+        "This email address is already registered. Please use a different email or login instead."
       );
+      return;
+    }
+
+    // Validasi panjang password
+    if (password.length < 6) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must be at least 6 characters long."
+      );
+      return;
+    }
+
+    // Validasi nomor telepon
+    if (phone.length < 10 || !phone.startsWith("62")) {
+      let errorMessage = "";
+      if (phone.length < 10) {
+        errorMessage = "Phone number must have at least 10 digits.";
+      } else if (!phone.startsWith("62")) {
+        errorMessage = "Phone number must start with '62'.";
+      }
+
+      Alert.alert("Invalid Phone Number", errorMessage);
       return;
     }
 
     // Register user
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
-        const user = userCredentials._tokenResponse.email;
-        const uid = auth.currentUser.uid;
-        setDoc(doc(db, "users", `${uid}`), {
+        // Dapatkan ID pengguna yang baru dibuat
+        const uid = userCredentials.user.uid;
+
+        // Set dokumen pengguna di Firestore
+        setDoc(doc(db, "users", uid), {
           name: name,
-          email: user,
+          email: email,
           phone: phone,
           role: role,
-        });
-      })
-      .then(() => {
-        auth.signOut(); // Melakukan logout pengguna
-        navigation.navigate("Login");
+        })
+          .then(() => {
+            auth.signOut(); // Melakukan logout pengguna
+            // Jika berhasil, navigasi ke halaman login
+            navigation.navigate("Login");
+          })
+          .catch((error) => {
+            console.error("Error setting user document:", error);
+            // Handle error setting user document
+          });
       })
       .catch((error) => {
         console.error("Error signing up:", error);
@@ -118,6 +128,29 @@ const RegisterScreen = () => {
         );
       });
   };
+  //   createUserWithEmailAndPassword(auth, email, password)
+  //     .then((userCredentials) => {
+  //       const user = userCredentials._tokenResponse.email;
+  //       const uid = auth.currentUser.uid;
+  //       setDoc(doc(db, "users", `${uid}`), {
+  //         name: name,
+  //         email: user,
+  //         phone: phone,
+  //         role: role,
+  //       });
+  //     })
+  //     .then(() => {
+  //       auth.signOut(); // Melakukan logout pengguna
+  //       navigation.navigate("Login");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error signing up:", error);
+  //       Alert.alert(
+  //         "Email Already Registered",
+  //         "This email address is already registered. Please use a different email or login instead."
+  //       );
+  //     });
+  // };
 
   return (
     <ScrollView>
@@ -239,15 +272,16 @@ const RegisterScreen = () => {
               <TextInput
                 value={phone}
                 onChangeText={(text) => setPhone(text)}
-                placeholder="enter your Phone No"
-                placeholderTextColor={"black"}
+                placeholder="Enter your Phone No"
+                placeholderTextColor="black"
                 style={{
-                  fontSize: password ? 18 : 18,
+                  fontSize: 18,
                   borderBottomColor: "gray",
                   borderBottomWidth: 1,
                   marginVertical: 10,
                   width: 300,
                 }}
+                keyboardType="numeric"
               />
             </View>
           </View>

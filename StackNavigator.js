@@ -19,6 +19,7 @@ import CartScreen from "./src/Screens/cart/Cart";
 import CheckoutScreen from "./src/Screens/checkout/Checkout";
 import LoadingScreen from "./src/Screens/loading/Loading";
 import LaporanAdminScreen from "./src/Screens/laporanAdmin/LaporanAdmin";
+import LaporanKaryawanScreen from "./src/Screens/laporanKaryawan/LaporanKaryawan";
 
 const StackNavigator = () => {
   const Tab = createBottomTabNavigator();
@@ -38,6 +39,20 @@ const StackNavigator = () => {
                 <Entypo name="home" size={24} color="royalblue" />
               ) : (
                 <AntDesign name="home" size={24} color="black" />
+              ),
+          }}
+        />
+        <Tab.Screen
+          name="Laporan"
+          component={LaporanKaryawanScreen}
+          options={{
+            tabBarLabel: "Laporan",
+            headerShown: false,
+            tabBarIcon: ({ focused }) =>
+              focused ? (
+                <AntDesign name="filetext1" size={24} color="royalblue" />
+              ) : (
+                <AntDesign name="filetext1" size={24} color="black" />
               ),
           }}
         />
@@ -105,9 +120,7 @@ const StackNavigator = () => {
                 <Ionicons name="person" size={24} color="black" />
               ),
           }}
-        /> 
-
-      
+        />
       </Tab.Navigator>
     );
   }
