@@ -18,7 +18,7 @@ const Splashscreen = ({ navigation }) => {
         source={require("../../../assets/logo.png")}
         style={{ width: 350, height: 350 }}
       />
-      <Text style={styles.text}>SOFI AIR</Text>
+      {/* <Text style={styles.text}>KADO WATER</Text> */}
     </View>
   );
 };
