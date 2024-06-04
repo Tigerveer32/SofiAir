@@ -27,7 +27,7 @@ export default Splashscreen;
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: "royalblue",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
     flex: 1,

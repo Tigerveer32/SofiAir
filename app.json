@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Kado",
-    "slug": "Kado",
+    "slug": "SofiAir",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -38,6 +38,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/424a0e96-c38b-4776-b2c4-482c68c88077"
-    }
+    },
+    "owner": "ulul.albab"
   }
 }
